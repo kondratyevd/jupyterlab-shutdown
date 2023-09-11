@@ -1,5 +1,5 @@
 """
-jupyterlab-logout setup
+jupyterlab-shutdown setup
 """
 import json
 from pathlib import Path
@@ -16,7 +16,7 @@ import setuptools
 HERE = Path(__file__).parent.resolve()
 
 # The name of the project
-name = "jupyterlab-logout"
+name = "jupyterlab-shutdown"
 
 lab_path = (HERE / name / "labextension")
 
@@ -29,7 +29,7 @@ package_data_spec = {
     name: ["*"],
 }
 
-labext_name = "jupyterlab-logout"
+labext_name = "jupyterlab-shutdown"
 
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),

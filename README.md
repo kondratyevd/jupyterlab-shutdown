@@ -1,11 +1,11 @@
-# jupyterlab-logout
+# jupyterlab-shutdown
 
-[![Extension status](https://img.shields.io/badge/status-ready-success "ready to be used")](https://jupyterlab-contrib.github.io/)
-![Github Actions Status](https://github.com/jupyterlab-contrib/jupyterlab-logout/workflows/Build/badge.svg)
+[![Extension status](https://img.shields.io/badge/status-ready-success "ready to be used")](https://kondratyevd.github.io/)
+![Github Actions Status](https://github.com/kondratyevd/jupyterlab-shutdown/workflows/Build/badge.svg)
 
-Logout Button for JupyterLab
+Shutdown Button for JupyterLab
 
-![screenshot](./doc/screenshot.png)
+<!-- ![screenshot](./doc/screenshot.png) -->
 
 ## Requirements
 
@@ -14,7 +14,7 @@ Logout Button for JupyterLab
 ## Install
 
 ```bash
-pip install jupyterlab-logout
+pip install jupyterlab-shutdown
 ```
 
 ## Contributing
@@ -29,7 +29,7 @@ The `jlpm` command is JupyterLab's pinned version of
 
 ```bash
 # Clone the repo to your local environment
-# Change directory to the jupyterlab-logout directory
+# Change directory to the jupyterlab-shutdown directory
 # Install package in development mode
 pip install -e .
 # Link your development version of the extension with JupyterLab
@@ -58,5 +58,5 @@ jupyter lab build --minimize=False
 ### Uninstall
 
 ```bash
-pip uninstall jupyterlab-logout
+pip uninstall jupyterlab-shutdown
 ```

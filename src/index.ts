@@ -13,20 +13,20 @@ import '@jupyterlab/application/style/buttons.css';
 import '../style/index.css';
 
 const extension: JupyterFrontEndPlugin<void> = {
-  id: 'jupyterlab-logout:plugin',
+  id: 'jupyterlab-shutdown:plugin',
   autoStart: true,
   requires: [IRouter, ITopBar],
   activate: async (app: JupyterFrontEnd, router: IRouter, topBar: ITopBar) => {
-    const logout = document.createElement('a');
-    logout.id = 'logout';
-    logout.innerHTML = 'Log Out';
-    logout.addEventListener('click', () => {
-      router.navigate('/logout', { hard: true });
+    const shutdown = document.createElement('a');
+    shutdown.id = 'shutdown';
+    shutdown.innerHTML = 'Shut Down';
+    shutdown.addEventListener('click', () => {
+      router.navigate('/shutdown', { hard: true });
     });
 
-    const widget = new Widget({ node: logout });
+    const widget = new Widget({ node: shutdown });
     widget.addClass('jp-Button-flat');
-    topBar.addItem('logout-button', widget);
+    topBar.addItem('shutdown-button', widget);
   }
 };
 
