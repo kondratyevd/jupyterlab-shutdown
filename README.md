@@ -5,6 +5,7 @@
 
 Shutdown Button for JupyterLab
 
+This extension is based on [jupyterlab-contrib/jupyterlab-logout](https://github.com/jupyterlab-contrib/jupyterlab-logout) extension.
 <!-- ![screenshot](./doc/screenshot.png) -->
 
 ## Requirements
