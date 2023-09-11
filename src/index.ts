@@ -17,11 +17,18 @@ const extension: JupyterFrontEndPlugin<void> = {
   autoStart: true,
   requires: [IRouter, ITopBar],
   activate: async (app: JupyterFrontEnd, router: IRouter, topBar: ITopBar) => {
+    const { commands } = app;
     const shutdown = document.createElement('a');
     shutdown.id = 'shutdown';
     shutdown.innerHTML = 'Shut Down';
     shutdown.addEventListener('click', () => {
-      router.navigate('/shutdown', { hard: true });
+      if (commands.hasCommand('hub:control-panel')) {
+        // For JupyterHub
+        commands.execute('hub:control-panel');
+      } else {
+        // For basic JupyterLab w/o JupyterHub integration
+        commands.execute('filemenu:shutdown');
+      }
     });
 
     const widget = new Widget({ node: shutdown });
