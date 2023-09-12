@@ -29,73 +29,73 @@ const extension: JupyterFrontEndPlugin<void> = {
   ) => {
     const { commands } = app;
     const customShutdown = 'hub:custom-shutdown';
+    commands.addCommand(customShutdown, {
+      label: 'Shut Down',
+      caption: 'Shut down user session',
+      execute: () => {
+        return showDialog({
+          title: 'Shut down Analysis Facility session',
+          body: 'Warning: unsaved data will be lost!',
+          buttons: [
+            Dialog.cancelButton(),
+            Dialog.warnButton({ label: 'Shut Down' })
+          ]
+        }).then(async result => {
+          if (result.button.accept) {
+            const setting = ServerConnection.makeSettings();
+            const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
+            // Shutdown all kernel and terminal sessions before shutting down the server
+            // If this fails, we continue execution so we can post an api/shutdown request
+            try {
+              await Promise.all([
+                app.serviceManager.sessions.shutdownAll(),
+                app.serviceManager.terminals.shutdownAll()
+              ]);
+            } catch (e) {
+              // Do nothing
+              console.log(`Failed to shutdown sessions and terminals: ${e}`);
+            }
+
+            return ServerConnection.makeRequest(
+              apiURL,
+              { method: 'POST' },
+              setting
+            )
+              .then(result => {
+                if (result.ok) {
+                  // Close this window if the shutdown request has been successful
+                  const body = document.createElement('div');
+                  const p1 = document.createElement('p');
+                  p1.textContent =
+                    'You have shut down the session. You can now close this tab.';
+                  const p2 = document.createElement('p');
+                  p2.textContent =
+                    'To restart Analysis Facility, please refresh the page.';
+
+                  body.appendChild(p1);
+                  body.appendChild(p2);
+                  void showDialog({
+                    title: 'Session closed.',
+                    body: new Widget({ node: body }),
+                    buttons: []
+                  });
+                  window.close();
+                } else {
+                  throw new ServerConnection.ResponseError(result);
+                }
+              })
+              .catch(data => {
+                throw new ServerConnection.NetworkError(data);
+              });
+          }
+        });
+      }
+    });
 
     const shutdown = document.createElement('a');
     shutdown.id = 'shutdown';
     shutdown.innerHTML = 'Shut Down';
     shutdown.addEventListener('click', () => {
-      commands.addCommand(customShutdown, {
-        label: 'Shut Down',
-        caption: 'Shut down user session',
-        execute: () => {
-          return showDialog({
-            title: 'Shut down Analysis Facility session',
-            body: 'Warning: unsaved data will be lost!',
-            buttons: [
-              Dialog.cancelButton(),
-              Dialog.warnButton({ label: 'Shut Down' })
-            ]
-          }).then(async result => {
-            if (result.button.accept) {
-              const setting = ServerConnection.makeSettings();
-              const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
-              // Shutdown all kernel and terminal sessions before shutting down the server
-              // If this fails, we continue execution so we can post an api/shutdown request
-              try {
-                await Promise.all([
-                  app.serviceManager.sessions.shutdownAll(),
-                  app.serviceManager.terminals.shutdownAll()
-                ]);
-              } catch (e) {
-                // Do nothing
-                console.log(`Failed to shutdown sessions and terminals: ${e}`);
-              }
-
-              return ServerConnection.makeRequest(
-                apiURL,
-                { method: 'POST' },
-                setting
-              )
-                .then(result => {
-                  if (result.ok) {
-                    // Close this window if the shutdown request has been successful
-                    const body = document.createElement('div');
-                    const p1 = document.createElement('p');
-                    p1.textContent =
-                      'You have shut down the session. You can now close this tab.';
-                    const p2 = document.createElement('p');
-                    p2.textContent =
-                      'To restart Analysis Facility, please refresh the page.';
-
-                    body.appendChild(p1);
-                    body.appendChild(p2);
-                    void showDialog({
-                      title: 'Session closed.',
-                      body: new Widget({ node: body }),
-                      buttons: []
-                    });
-                    window.close();
-                  } else {
-                    throw new ServerConnection.ResponseError(result);
-                  }
-                })
-                .catch(data => {
-                  throw new ServerConnection.NetworkError(data);
-                });
-            }
-          });
-        }
-      });
       commands.execute(customShutdown);
     });
 
