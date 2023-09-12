@@ -69,9 +69,11 @@ const extension: JupyterFrontEndPlugin<void> = {
                   ]);
                 } catch (e) {
                   // Do nothing
-                  console.log(`TEST Failed to shutdown sessions and terminals: ${e}`);
+                  console.log(
+                    `TEST Failed to shutdown sessions and terminals: ${e}`
+                  );
                 }
-        
+
                 return ServerConnection.makeRequest(
                   apiURL,
                   { method: 'POST' },
@@ -82,10 +84,12 @@ const extension: JupyterFrontEndPlugin<void> = {
                       // Close this window if the shutdown request has been successful
                       const body = document.createElement('div');
                       const p1 = document.createElement('p');
-                      p1.textContent = 'TEST You have shut down the Jupyter server. You can now close this tab.';
+                      p1.textContent =
+                        'TEST You have shut down the Jupyter server. You can now close this tab.';
                       const p2 = document.createElement('p');
-                      p2.textContent = 'TEST To use JupyterLab again, you will need to relaunch it.';
-      
+                      p2.textContent =
+                        'TEST To use JupyterLab again, you will need to relaunch it.';
+
                       body.appendChild(p1);
                       body.appendChild(p2);
                       void showDialog({
@@ -101,11 +105,10 @@ const extension: JupyterFrontEndPlugin<void> = {
                   .catch(data => {
                     throw new ServerConnection.NetworkError(data);
                   });
-                }
-              });
-            }
+              }
+            });
           }
-        );
+          });
         commands.execute(customShutdown);
       } else {
         // For basic JupyterLab w/o JupyterHub integration
