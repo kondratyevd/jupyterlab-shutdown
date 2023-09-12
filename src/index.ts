@@ -18,7 +18,11 @@ const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-shutdown:plugin',
   autoStart: true,
   requires: [IRouter, ITopBar],
-  activate: async (app: JupyterFrontEnd, paths: JupyterFrontEnd.IPaths, topBar: ITopBar) => {
+  activate: async (
+    app: JupyterFrontEnd,
+    paths: JupyterFrontEnd.IPaths,
+    topBar: ITopBar
+  ) => {
     const { commands } = app;
     let hubHost = '';
     let hubPrefix = '';
@@ -26,7 +30,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       hubHost = paths.urls.hubHost;
       hubPrefix = paths.urls.hubPrefix;
     }
-    const controlPanelSameTab = 'hub:control-panel-same-tab'
+    const controlPanelSameTab = 'hub:control-panel-same-tab';
 
     const shutdown = document.createElement('a');
     shutdown.id = 'shutdown';
