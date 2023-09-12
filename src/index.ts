@@ -58,9 +58,7 @@ const extension: JupyterFrontEndPlugin<void> = {
                 ]);
               } catch (e) {
                 // Do nothing
-                console.log(
-                  `Failed to shutdown sessions and terminals: ${e}`
-                );
+                console.log(`Failed to shutdown sessions and terminals: ${e}`);
               }
 
               return ServerConnection.makeRequest(
