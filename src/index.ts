@@ -28,92 +28,77 @@ const extension: JupyterFrontEndPlugin<void> = {
     topBar: ITopBar
   ) => {
     const { commands } = app;
-    // const menu = new MainMenu(commands);
-    // let hubHost = '';
-    let hubPrefix = '';
-    if (paths.urls) {
-      // hubHost = paths.urls.hubHost;
-      hubPrefix = paths.urls.hubPrefix;
-    }
     const customShutdown = 'hub:custom-shutdown';
 
     const shutdown = document.createElement('a');
     shutdown.id = 'shutdown';
     shutdown.innerHTML = 'Shut Down';
     shutdown.addEventListener('click', () => {
-      if (hubPrefix) {
-        // For JupyterHub
-        commands.addCommand(customShutdown, {
-          label: 'TEST Shut Down',
-          caption: 'TEST Shut down JupyterLab',
-          // isVisible: () => menu.quitEntry,
-          // isEnabled: () => menu.quitEntry,
-          execute: () => {
-            return showDialog({
-              title: 'TEST Shutdown confirmation',
-              body: 'TEST Please confirm you want to shut down JupyterLab.',
-              buttons: [
-                Dialog.cancelButton(),
-                Dialog.warnButton({ label: 'TEST Shut Down' })
-              ]
-            }).then(async result => {
-              if (result.button.accept) {
-                const setting = ServerConnection.makeSettings();
-                const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
-                // Shutdown all kernel and terminal sessions before shutting down the server
-                // If this fails, we continue execution so we can post an api/shutdown request
-                try {
-                  await Promise.all([
-                    app.serviceManager.sessions.shutdownAll(),
-                    app.serviceManager.terminals.shutdownAll()
-                  ]);
-                } catch (e) {
-                  // Do nothing
-                  console.log(
-                    `TEST Failed to shutdown sessions and terminals: ${e}`
-                  );
-                }
-
-                return ServerConnection.makeRequest(
-                  apiURL,
-                  { method: 'POST' },
-                  setting
-                )
-                  .then(result => {
-                    if (result.ok) {
-                      // Close this window if the shutdown request has been successful
-                      const body = document.createElement('div');
-                      const p1 = document.createElement('p');
-                      p1.textContent =
-                        'TEST You have shut down the Jupyter server. You can now close this tab.';
-                      const p2 = document.createElement('p');
-                      p2.textContent =
-                        'TEST To use JupyterLab again, you will need to relaunch it.';
-
-                      body.appendChild(p1);
-                      body.appendChild(p2);
-                      void showDialog({
-                        title: 'TEST Server stopped',
-                        body: new Widget({ node: body }),
-                        buttons: []
-                      });
-                      window.close();
-                    } else {
-                      throw new ServerConnection.ResponseError(result);
-                    }
-                  })
-                  .catch(data => {
-                    throw new ServerConnection.NetworkError(data);
-                  });
+      commands.addCommand(customShutdown, {
+        label: 'Shut Down',
+        caption: 'Shut down user session',
+        execute: () => {
+          return showDialog({
+            title: 'Shut down Analysis Facility session',
+            body: 'Warning: unsaved data will be lost!',
+            buttons: [
+              Dialog.cancelButton(),
+              Dialog.warnButton({ label: 'Shut Down' })
+            ]
+          }).then(async result => {
+            if (result.button.accept) {
+              const setting = ServerConnection.makeSettings();
+              const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
+              // Shutdown all kernel and terminal sessions before shutting down the server
+              // If this fails, we continue execution so we can post an api/shutdown request
+              try {
+                await Promise.all([
+                  app.serviceManager.sessions.shutdownAll(),
+                  app.serviceManager.terminals.shutdownAll()
+                ]);
+              } catch (e) {
+                // Do nothing
+                console.log(
+                  `Failed to shutdown sessions and terminals: ${e}`
+                );
               }
-            });
-          }
-        });
-        commands.execute(customShutdown);
-      } else {
-        // For basic JupyterLab w/o JupyterHub integration
-        commands.execute('filemenu:shutdown');
-      }
+
+              return ServerConnection.makeRequest(
+                apiURL,
+                { method: 'POST' },
+                setting
+              )
+                .then(result => {
+                  if (result.ok) {
+                    // Close this window if the shutdown request has been successful
+                    const body = document.createElement('div');
+                    const p1 = document.createElement('p');
+                    p1.textContent =
+                      'You have shut down the session. You can now close this tab.';
+                    const p2 = document.createElement('p');
+                    p2.textContent =
+                      'To restart Analysis Facility, please refresh the page.';
+
+                    body.appendChild(p1);
+                    body.appendChild(p2);
+                    void showDialog({
+                      title: 'Session closed.',
+                      body: new Widget({ node: body }),
+                      buttons: []
+                    });
+                    window.close();
+                  } else {
+                    throw new ServerConnection.ResponseError(result);
+                  }
+                })
+                .catch(data => {
+                  throw new ServerConnection.NetworkError(data);
+                });
+            }
+          });
+        }
+      });
+      commands.execute(customShutdown);
     });
 
     const widget = new Widget({ node: shutdown });
