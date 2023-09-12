@@ -108,7 +108,7 @@ const extension: JupyterFrontEndPlugin<void> = {
               }
             });
           }
-          });
+        });
         commands.execute(customShutdown);
       } else {
         // For basic JupyterLab w/o JupyterHub integration
