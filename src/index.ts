@@ -75,10 +75,9 @@ const extension: JupyterFrontEndPlugin<void> = {
                     buttons: []
                   });
                   window.close();
-                  window.location.href = URLExt.join(
-                    setting.baseUrl,
-                    'hub/home'
-                  );
+                  const baseUrl = new URL(setting.baseUrl);
+                  window.location.href =
+                    baseUrl.protocol + '//' + baseUrl.hostname;
                 } else {
                   throw new ServerConnection.ResponseError(result);
                 }
