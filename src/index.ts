@@ -75,9 +75,45 @@ const extension: JupyterFrontEndPlugin<void> = {
                     buttons: []
                   });
                   window.close();
+                  // const baseUrl = new URL(setting.baseUrl);
+                  // window.location.href =
+                  //   baseUrl.protocol + '//' + baseUrl.hostname + '/hub/spawn';
+
+                  // Define a function to handle the redirection
+                  const redirectToHub = async (url: string) => {
+                    window.location.href = url;
+                  };
+
+                  // Retry the redirection up to 5 times with a delay of 1 second between retries
+                  let retryCount = 0;
+                  const maxRetries = 5;
+                  const retryDelay = 1000; // 1 second
+
+                  const attemptRedirection = async (url: string) => {
+                    try {
+                      await redirectToHub(url);
+                    } catch (error: any) {
+                      if (
+                        error &&
+                        error.status === 503 &&
+                        retryCount < maxRetries
+                      ) {
+                        // If it's a 503 error, and we haven't exceeded the max retries, retry after a delay
+                        retryCount++;
+                        setTimeout(() => attemptRedirection(url), retryDelay);
+                      } else {
+                        throw error; // Propagate the error if it's not a 503 error or if max retries are reached
+                      }
+                    }
+                  };
+
+                  // Define the URL to redirect to
                   const baseUrl = new URL(setting.baseUrl);
-                  window.location.href =
+                  const hubUrl =
                     baseUrl.protocol + '//' + baseUrl.hostname + '/hub/spawn';
+
+                  // Start the redirection attempt with the specified URL
+                  attemptRedirection(hubUrl);
                 } else {
                   throw new ServerConnection.ResponseError(result);
                 }
