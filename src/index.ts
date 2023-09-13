@@ -36,58 +36,58 @@ const extension: JupyterFrontEndPlugin<void> = {
             Dialog.cancelButton(),
             Dialog.warnButton({ label: 'Shut Down' })
           ]
-        })
-          .then(async result => {
-            if (result.button.accept) {
-              const setting = ServerConnection.makeSettings();
-              const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
-              // Shutdown all kernel and terminal sessions before shutting down the server
-              // If this fails, we continue execution so we can post an api/shutdown request
-              try {
-                await Promise.all([
-                  app.serviceManager.sessions.shutdownAll(),
-                  app.serviceManager.terminals.shutdownAll()
-                ]);
-              } catch (e) {
-                // Do nothing
-                console.log(`Failed to shutdown sessions and terminals: ${e}`);
-              }
-
-              return ServerConnection.makeRequest(
-                apiURL,
-                { method: 'POST' },
-                setting
-              )
-                .then(result => {
-                  if (result.ok) {
-                    // Close this window if the shutdown request has been successful
-                    const body = document.createElement('div');
-                    const p1 = document.createElement('p');
-                    p1.textContent = 'You have shut down the session.';
-                    const p2 = document.createElement('p');
-                    p2.textContent =
-                      'You will now be redirected to the Analysis Facility starting page.';
-
-                    body.appendChild(p1);
-                    body.appendChild(p2);
-                    void showDialog({
-                      title: 'Session closed.',
-                      body: new Widget({ node: body }),
-                      buttons: []
-                    });
-                    window.close();
-                  } else {
-                    throw new ServerConnection.ResponseError(result);
-                  }
-                })
-                .catch(data => {
-                  throw new ServerConnection.NetworkError(data);
-                });
+        }).then(async result => {
+          if (result.button.accept) {
+            const setting = ServerConnection.makeSettings();
+            const apiURL = URLExt.join(setting.baseUrl, 'api/shutdown');
+            // Shutdown all kernel and terminal sessions before shutting down the server
+            // If this fails, we continue execution so we can post an api/shutdown request
+            try {
+              await Promise.all([
+                app.serviceManager.sessions.shutdownAll(),
+                app.serviceManager.terminals.shutdownAll()
+              ]);
+            } catch (e) {
+              // Do nothing
+              console.log(`Failed to shutdown sessions and terminals: ${e}`);
             }
-          })
-          .then(() => {
-            router.navigate('/hub/home/', { hard: true });
-          });
+
+            return ServerConnection.makeRequest(
+              apiURL,
+              { method: 'POST' },
+              setting
+            )
+              .then(result => {
+                if (result.ok) {
+                  // Close this window if the shutdown request has been successful
+                  const body = document.createElement('div');
+                  const p1 = document.createElement('p');
+                  p1.textContent = 'You have shut down the session.';
+                  const p2 = document.createElement('p');
+                  p2.textContent =
+                    'You will now be redirected to the Analysis Facility starting page.';
+
+                  body.appendChild(p1);
+                  body.appendChild(p2);
+                  void showDialog({
+                    title: 'Session closed.',
+                    body: new Widget({ node: body }),
+                    buttons: []
+                  });
+                  window.close();
+                  window.location.href = URLExt.join(
+                    setting.baseUrl,
+                    'hub/home'
+                  );
+                } else {
+                  throw new ServerConnection.ResponseError(result);
+                }
+              })
+              .catch(data => {
+                throw new ServerConnection.NetworkError(data);
+              });
+          }
+        });
       }
     });
 
