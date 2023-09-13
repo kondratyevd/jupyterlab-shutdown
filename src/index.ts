@@ -67,9 +67,10 @@ const extension: JupyterFrontEndPlugin<void> = {
 
                   const baseUrl = new URL(setting.baseUrl);
                   const link = document.createElement('a');
-                  link.href = baseUrl.href + '/home';
+                  link.href =
+                    baseUrl.protocol + '//' + baseUrl.hostname + '/home';
                   link.textContent =
-                    'Click here or refresh the page to go restart the session.';
+                    'Click here or refresh the page to restart the session.';
                   link.style.color = 'var(--jp-content-link-color)';
 
                   body.appendChild(p1);
