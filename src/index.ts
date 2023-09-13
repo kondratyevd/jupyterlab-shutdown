@@ -77,7 +77,7 @@ const extension: JupyterFrontEndPlugin<void> = {
                   window.close();
                   const baseUrl = new URL(setting.baseUrl);
                   window.location.href =
-                    baseUrl.protocol + '//' + baseUrl.hostname;
+                    baseUrl.protocol + '//' + baseUrl.hostname + '/hub/spawn';
                 } else {
                   throw new ServerConnection.ResponseError(result);
                 }
