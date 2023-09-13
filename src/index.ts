@@ -24,7 +24,7 @@ const extension: JupyterFrontEndPlugin<void> = {
   requires: [IRouter, ITopBar],
   activate: async (
     app: JupyterFrontEnd,
-    paths: JupyterFrontEnd.IPaths,
+    router: IRouter,
     topBar: ITopBar
   ) => {
     const { commands } = app;
@@ -67,10 +67,10 @@ const extension: JupyterFrontEndPlugin<void> = {
                   const body = document.createElement('div');
                   const p1 = document.createElement('p');
                   p1.textContent =
-                    'You have shut down the session. You can now close this tab.';
+                    'You have shut down the session.';
                   const p2 = document.createElement('p');
                   p2.textContent =
-                    'To restart Analysis Facility, please refresh the page.';
+                    'You will now be redirected to the Analysis Facility starting page.';
 
                   body.appendChild(p1);
                   body.appendChild(p2);
@@ -88,6 +88,8 @@ const extension: JupyterFrontEndPlugin<void> = {
                 throw new ServerConnection.NetworkError(data);
               });
           }
+        }).then(() => {
+          router.navigate('/hub/home/', { hard: true });
         });
       }
     });
