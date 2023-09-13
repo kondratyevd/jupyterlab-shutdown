@@ -62,24 +62,24 @@ const extension: JupyterFrontEndPlugin<void> = {
                   // Close this window if the shutdown request has been successful
                   const body = document.createElement('div');
                   const p1 = document.createElement('p');
-                  p1.textContent = 'You have shut down the session.';
-                  const p2 = document.createElement('p');
-                  p2.textContent =
-                    'You will now be redirected to the Analysis Facility starting page.';
+                  p1.textContent =
+                    'You have shut down the Analysis Facility session.';
+
+                  const baseUrl = new URL(setting.baseUrl);
+                  const link = document.createElement('a');
+                  link.href = baseUrl.href + '/home';
+                  link.textContent =
+                    'Click here or refresh the page to go restart the session.';
+                  link.style.color = 'var(--jp-content-link-color)';
 
                   body.appendChild(p1);
-                  body.appendChild(p2);
+                  body.appendChild(link);
                   void showDialog({
                     title: 'Session closed.',
                     body: new Widget({ node: body }),
                     buttons: []
                   });
                   window.close();
-                  const baseUrl = new URL(setting.baseUrl);
-                  setTimeout(() => {
-                    window.location.href =
-                      baseUrl.protocol + '//' + baseUrl.hostname + '/hub/spawn';
-                  }, 5000);
                 } else {
                   throw new ServerConnection.ResponseError(result);
                 }
