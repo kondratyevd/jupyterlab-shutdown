@@ -80,7 +80,6 @@ const extension: JupyterFrontEndPlugin<void> = {
                     body: new Widget({ node: body }),
                     buttons: []
                   });
-                  window.close();
                 } else {
                   throw new ServerConnection.ResponseError(result);
                 }
