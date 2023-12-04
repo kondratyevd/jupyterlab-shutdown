@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v4.2.4
+_src_path: https://github.com/jupyterlab/extension-template
+author_email: ''
+author_name: jupyterlab-logout contributors
+has_binder: false
+has_settings: false
+kind: frontend
+labextension_name: jupyterlab-shutdown
+project_short_description: Shutdown Button for JupyterLab
+python_name: jupyterlab_shutdown
+repository: https://github.com/kondratyevd/jupyterlab-shutdown.git
+test: false
+
